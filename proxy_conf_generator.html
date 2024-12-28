@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Input Form</h2>
+        <form id="inputForm">
+            <div class="form-group">
+                <label for="suffix">Suffix:</label>
+                <input type="text" id="suffix" name="suffix" required>
+            </div>
+            <div class="form-group">
+                <label for="host">Host:</label>
+                <input type="text" id="host" name="host" required>
+            </div>
+            <div id="additionalFields"></div>
+            <div class="form-group">
+                <button type="button" onclick="addLine()">Add line</button>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="exportConfig()">Export</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addLine() {
+            const additionalFields = document.getElementById('additionalFields');
+            const newField = document.createElement('div');
+            newField.classList.add('form-group');
+            newField.innerHTML = `
+                <label for="suffix">Suffix:</label>
+                <input type="text" name="suffix" required>
+                <label for="host">Host:</label>
+                <input type="text" name="host" required>
+            `;
+            additionalFields.appendChild(newField);
+        }
+
+        function exportConfig() {
+            const form = document.getElementById('inputForm');
+            const formData = new FormData(form);
+            const suffixes = formData.getAll('suffix');
+            const hosts = formData.getAll('host');
+
+            let config = `events {}\n\nhttp {\n    server {\n        listen 80;\n        server_name localhost;\n\n`;
+
+            for (let i = 0; i < suffixes.length; i++) {
+                config += `        location ${suffixes[i]} {\n            proxy_pass ${hosts[i]};\n        }\n\n`;
+            }
+
+            config += `    }\n}`;
+
+            const blob = new Blob([config], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'nginx.conf';
+            link.click();
+        }
+    </script>
+</body>
+</html>
