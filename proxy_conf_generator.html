@@ -44,6 +44,14 @@
         .form-group button:hover {
             background-color: #0056b3;
         }
+        #result {
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -67,8 +75,10 @@
             <div class="form-group">
                 <button type="button" onclick="addLine()">Add line</button>
                 <button type="button" onclick="exportConfig()">Export</button>
+                <button type="button" onclick="showConfig()">Show</button>
             </div>
         </form>
+        <div id="result"></div>
     </div>
 
     <script>
@@ -81,7 +91,7 @@
             hostCell.innerHTML = '<input type="text" name="host" required>';
         }
 
-        function exportConfig() {
+        function generateConfig() {
             const form = document.getElementById('inputForm');
             const formData = new FormData(form);
             const suffixes = formData.getAll('suffix');
@@ -94,12 +104,21 @@
             }
 
             config += `    }\n}`;
+            return config;
+        }
 
+        function exportConfig() {
+            const config = generateConfig();
             const blob = new Blob([config], { type: 'text/plain' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'nginx.conf';
             link.click();
+        }
+
+        function showConfig() {
+            const config = generateConfig();
+            document.getElementById('result').textContent = config;
         }
     </script>
 </body>
