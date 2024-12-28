@@ -16,17 +16,17 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        .form-group {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-bottom: 15px;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+        table, th, td {
+            border: 1px solid #ccc;
         }
-        .form-group input {
-            width: 100%;
+        th, td {
             padding: 8px;
-            box-sizing: border-box;
+            text-align: left;
         }
         .form-group button {
             padding: 10px 15px;
@@ -45,15 +45,20 @@
     <div class="form-container">
         <h2>Input Form</h2>
         <form id="inputForm">
-            <div class="form-group">
-                <label for="suffix">Suffix:</label>
-                <input type="text" id="suffix" name="suffix" required>
-            </div>
-            <div class="form-group">
-                <label for="host">Host:</label>
-                <input type="text" id="host" name="host" required>
-            </div>
-            <div id="additionalFields"></div>
+            <table id="inputTable">
+                <thead>
+                    <tr>
+                        <th>Suffix</th>
+                        <th>Host</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="suffix" required></td>
+                        <td><input type="text" name="host" required></td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="form-group">
                 <button type="button" onclick="addLine()">Add line</button>
             </div>
@@ -65,16 +70,12 @@
 
     <script>
         function addLine() {
-            const additionalFields = document.getElementById('additionalFields');
-            const newField = document.createElement('div');
-            newField.classList.add('form-group');
-            newField.innerHTML = `
-                <label for="suffix">Suffix:</label>
-                <input type="text" name="suffix" required>
-                <label for="host">Host:</label>
-                <input type="text" name="host" required>
-            `;
-            additionalFields.appendChild(newField);
+            const table = document.getElementById('inputTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            const suffixCell = newRow.insertCell(0);
+            const hostCell = newRow.insertCell(1);
+            suffixCell.innerHTML = '<input type="text" name="suffix" required>';
+            hostCell.innerHTML = '<input type="text" name="host" required>';
         }
 
         function exportConfig() {
