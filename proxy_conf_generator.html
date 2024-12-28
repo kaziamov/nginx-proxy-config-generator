@@ -61,14 +61,18 @@
             <table id="inputTable">
                 <thead>
                     <tr>
-                        <th>suffix (/suffix)</th>
-                        <th>host (http://localhost:8080)</th>
+                        <th>Suffix</th>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th>HTTPS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><input type="text" name="suffix" required></td>
                         <td><input type="text" name="host" required></td>
+                        <td><input type="text" name="port" required></td>
+                        <td><input type="checkbox" name="https"></td>
                     </tr>
                 </tbody>
             </table>
@@ -85,10 +89,12 @@
         function addLine() {
             const table = document.getElementById('inputTable').getElementsByTagName('tbody')[0];
             const newRow = table.insertRow();
-            const suffixCell = newRow.insertCell(0);
-            const hostCell = newRow.insertCell(1);
-            suffixCell.innerHTML = '<input type="text" name="suffix" required>';
-            hostCell.innerHTML = '<input type="text" name="host" required>';
+            newRow.innerHTML = `
+                <td><input type="text" name="suffix" required></td>
+                <td><input type="text" name="host" required></td>
+                <td><input type="text" name="port" required></td>
+                <td><input type="checkbox" name="https"></td>
+            `;
         }
 
         function generateConfig() {
@@ -96,11 +102,14 @@
             const formData = new FormData(form);
             const suffixes = formData.getAll('suffix');
             const hosts = formData.getAll('host');
+            const ports = formData.getAll('port');
+            const https = formData.getAll('https');
 
             let config = `events {}\n\nhttp {\n    server {\n        listen 80;\n        server_name localhost;\n\n`;
 
             for (let i = 0; i < suffixes.length; i++) {
-                config += `        location ${suffixes[i]} {\n            proxy_pass ${hosts[i]};\n        }\n\n`;
+                const protocol = https[i] ? 'https://' : 'http://';
+                config += `        location ${suffixes[i]} {\n            proxy_pass ${protocol}${hosts[i]}:${ports[i]};\n        }\n\n`;
             }
 
             config += `    }\n}`;
