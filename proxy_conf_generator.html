@@ -28,13 +28,18 @@
             padding: 8px;
             text-align: left;
         }
+        .form-group {
+            text-align: center;
+        }
         .form-group button {
+            display: inline-block;
             padding: 10px 15px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 5px;
         }
         .form-group button:hover {
             background-color: #0056b3;
@@ -61,8 +66,6 @@
             </table>
             <div class="form-group">
                 <button type="button" onclick="addLine()">Add line</button>
-            </div>
-            <div class="form-group">
                 <button type="button" onclick="exportConfig()">Export</button>
             </div>
         </form>
